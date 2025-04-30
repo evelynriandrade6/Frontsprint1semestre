@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/pageLogin";
 import Cadastro from "./pages/pageCadastro";
-import Listagem from "./pages/ListaPage";
+import CadastroSala from "./pages/CadastroSala";
+import ReservaSala from "./pages/ReservaSala";
 import Home from "./pages/pageHome";
 import ProtectedRoute from "./components/ProtectedRoutes";
 
@@ -21,10 +22,19 @@ function App() {
             }
           />
            <Route
-            path="/Lista"
+            path="/CadastroSala"
             element={
               <ProtectedRoute>
-                <Listagem />
+                <CadastroSala />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/ReservaSala"
+            element={
+              <ProtectedRoute>
+                <ReservaSala />
               </ProtectedRoute>
             }
           />
