@@ -2,9 +2,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/pageLogin";
 import Cadastro from "./pages/pageCadastro";
 import CadastroSala from "./pages/CadastroSala";
-import ReservaSala from "./pages/ReservaSala";
+import Reserva from "./pages/Reserva";
 import Home from "./pages/pageHome";
 import ProtectedRoute from "./components/ProtectedRoutes";
+import MinhasReservas from "./pages/MinhasReservas";
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-           <Route
+          <Route
             path="/CadastroSala"
             element={
               <ProtectedRoute>
@@ -31,10 +32,19 @@ function App() {
           />
 
           <Route
-            path="/ReservaSala"
+            path="/Reserva"
             element={
               <ProtectedRoute>
-                <ReservaSala />
+                <Reserva />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/MinhasReservas"
+            element={
+              <ProtectedRoute>
+                <MinhasReservas />
               </ProtectedRoute>
             }
           />

@@ -1,14 +1,12 @@
 import * as React from "react";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import TodayIcon from '@mui/icons-material/Today';
-import api from "../axios/axios";
+import { Link } from "react-router-dom";
+import TodayIcon from "@mui/icons-material/Today";
 import logo from "../images/SENAI.png";
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 const HomePage = () => {
   return (
@@ -28,37 +26,62 @@ const HomePage = () => {
 
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            width: '100%',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            width: "100%",
             marginTop: 4,
           }}
         >
           <TodayIcon sx={{ fontSize: 50, color: "black", marginRight: 2 }} />
-          <Link to="/Reserva" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Link
+            to="/Reserva"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
             <Typography component="h2">Reserve sua sala aqui</Typography>
           </Link>
         </Box>
 
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            width: '100%',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            width: "100%",
             marginTop: 4,
           }}
         >
-          <TodayIcon sx={{ fontSize: 50, color: "black", marginRight: 2 }} />
-          <Link to="/CadastroSala" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <CalendarMonthIcon sx={{ fontSize: 50, color: "black", marginRight: 2 }} />
+          <Link
+            to="/CadastroSala"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
             <Typography component="h2">Cadastre uma sala aqui</Typography>
           </Link>
         </Box>
       </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          width: "100%",
+          marginTop: 4, 
+        }}
+      >
+        <ContentPasteIcon
+          sx={{ fontSize: 50, color: "black", marginRight: 2 }}
+        />
+        <Link
+          to="/MinhasReservas"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <Typography component="h2">Suas Reservas</Typography>
+        </Link>
+      </Box>
     </Container>
   );
 };
-
 
 export default HomePage;

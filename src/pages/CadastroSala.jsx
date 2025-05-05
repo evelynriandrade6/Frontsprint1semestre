@@ -1,7 +1,8 @@
 import { useState } from "react";
-import api from "../axios/axios"; 
+import api from "../axios/axios";
 import { Box, Typography, TextField, Button, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import logo from "../images/SENAI.png";
 
 function CadastroSala() {
   const [classroom, SetClassroom] = useState({
@@ -48,6 +49,9 @@ function CadastroSala() {
           alignItems: "center",
         }}
       >
+        <img src={logo} style={{ width: "20%" }} />
+        <Typography component="h1" variant="h5"></Typography>
+        
         <Typography component="h1" variant="h5">
           Cadastre-se sua sala!
         </Typography>
@@ -110,6 +114,19 @@ function CadastroSala() {
             Criar sala
           </Button>
         </Box>
+      </Box>
+      <Box
+        sx={{
+          width: "80%",
+          display: "flex",
+          justifyContent: "flex-start",
+          mt: 2,
+          mb: 4,
+        }}
+      >
+        <Button variant="outlined" onClick={() => navigate("/Home")}>
+          Voltar
+        </Button>
       </Box>
     </Container>
   );
