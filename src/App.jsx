@@ -2,10 +2,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/pageLogin";
 import Cadastro from "./pages/pageCadastro";
 import CadastroSala from "./pages/CadastroSala";
-import Reserva from "./pages/Reserva";
+import ListClassrooms from "./pages/ListClassrooms";
 import Home from "./pages/pageHome";
 import ProtectedRoute from "./components/ProtectedRoutes";
-import MinhasReservas from "./pages/MinhasReservas";
+import MeuPerfil from "./pages/MeuPerfil";
 
 function App() {
   return (
@@ -32,19 +32,19 @@ function App() {
           />
 
           <Route
-            path="/Reserva"
+            path="/ListClassrooms"
             element={
               <ProtectedRoute>
-                <Reserva />
+                <ListClassrooms />
               </ProtectedRoute>
             }
           />
 
           <Route
-            path="/MinhasReservas"
+            path="/MeuPerfil"
             element={
               <ProtectedRoute>
-                <MinhasReservas />
+                <MeuPerfil />
               </ProtectedRoute>
             }
           />

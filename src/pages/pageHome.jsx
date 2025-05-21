@@ -5,8 +5,9 @@ import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 import TodayIcon from "@mui/icons-material/Today";
 import logo from "../images/SENAI.png";
-import ContentPasteIcon from '@mui/icons-material/ContentPaste';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ContentPasteIcon from "@mui/icons-material/ContentPaste";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import PersonIcon from "@mui/icons-material/Person";
 
 const HomePage = () => {
   return (
@@ -35,7 +36,7 @@ const HomePage = () => {
         >
           <TodayIcon sx={{ fontSize: 50, color: "black", marginRight: 2 }} />
           <Link
-            to="/Reserva"
+            to="/ListClassrooms"
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <Typography component="h2">Reserve sua sala aqui</Typography>
@@ -51,7 +52,9 @@ const HomePage = () => {
             marginTop: 4,
           }}
         >
-          <CalendarMonthIcon sx={{ fontSize: 50, color: "black", marginRight: 2 }} />
+          <CalendarMonthIcon
+            sx={{ fontSize: 50, color: "black", marginRight: 2 }}
+          />
           <Link
             to="/CadastroSala"
             style={{ textDecoration: "none", color: "inherit" }}
@@ -67,17 +70,15 @@ const HomePage = () => {
           alignItems: "center",
           justifyContent: "flex-start",
           width: "100%",
-          marginTop: 4, 
+          marginTop: 4,
         }}
       >
-        <ContentPasteIcon
-          sx={{ fontSize: 50, color: "black", marginRight: 2 }}
-        />
+        <PersonIcon sx={{ fontSize: 50, color: "black", marginRight: 2 }} />
         <Link
-          to="/MinhasReservas"
+          to="/MeuPerfil"
           style={{ textDecoration: "none", color: "inherit" }}
         >
-          <Typography component="h2">Suas Reservas</Typography>
+          <Typography component="h2">Meu Perfil</Typography>
         </Link>
       </Box>
     </Container>
