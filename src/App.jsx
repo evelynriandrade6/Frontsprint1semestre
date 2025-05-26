@@ -5,7 +5,9 @@ import CadastroSala from "./pages/CadastroSala";
 import ListClassrooms from "./pages/ListClassrooms";
 import Home from "./pages/pageHome";
 import ProtectedRoute from "./components/ProtectedRoutes";
+import ModalDisponibilidade from "./components/ModalDisponibilidade";
 import MeuPerfil from "./pages/MeuPerfil";
+// import ModalMinhasReservas from "./components/ModalMinhasReservas"
 
 function App() {
   return (
@@ -30,6 +32,22 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/ModalDisponibilidade"
+            element={
+              <ProtectedRoute>
+                <ModalDisponibilidade />
+              </ProtectedRoute>
+            }
+          />
+          {/* <Route
+            path="/ModalMinhasReservas"
+            element={
+              <ProtectedRoute>
+                <ModalMinhasReservas />
+              </ProtectedRoute>
+            }
+          /> */}
 
           <Route
             path="/ListClassrooms"

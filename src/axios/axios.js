@@ -1,19 +1,33 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL:"http://10.89.240.88:5000/api/reservas/v1/",
-    headers:{
-        'accept':'application/json'
+    baseURL: "http://10.89.240.88:5000/api/reservas/v1/",
+    headers: {
+        'accept': 'application/json'
     }
 });
 
+api.interceptors.request.use(
+    (config) =>{
+        const token = localStorage.getItem("token");
+        console.log(token);
+        if(token){
+            config.headers.Authorization=`${token}`;
+        }
+        return config;
+    },
+    (error) =>Promise.reject(error)
+)
+
 const sheets = {
-    postCadastro:(user)=>api.post("user", user),
-    postLogin:(user) => api.post("user/login", user),
-    postCadastroSala:(classroom)=>api.post("classroom", classroom),
-    postCadastroReserva:(schedule)=>api.post("schedule", schedule),
+    postCadastro: (user) => api.post("user", user),
+    postLogin: (user) => api.post("user/login", user),
+    postCadastroSala: (classroom) => api.post("classroom", classroom),
+    postcreateSchedule: (schedule) => api.post("schedule", schedule),
     getSchedulesByIdClassroom: (cpf) => api.get(`schedule/${cpf}`),
-    getAllClassroom:()=>api.get("classroom/")
-}
+    getAllClassroom: () => api.get("classroom/"),
+    getSchedulesByIdClassroomRanges: (id,dataInicio,dataFim) => api.get(`/schedule/ranges/${id}?weekStart=${dataInicio}&weekEnd=${dataFim}`),
+    updateUser:(user) => api.put("user", user),
+};
 
 export default sheets;
