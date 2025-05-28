@@ -7,6 +7,7 @@ import Home from "./pages/pageHome";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import ModalDisponibilidade from "./components/ModalDisponibilidade";
 import MeuPerfil from "./pages/MeuPerfil";
+import ModalEditarUsuario from "./components/ModalEditarUsuario";
 // import ModalMinhasReservas from "./components/ModalMinhasReservas"
 
 function App() {
@@ -54,6 +55,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <ListClassrooms />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/ModalEditarUsuario"
+            element={
+              <ProtectedRoute>
+                <ModalEditarUsuario />
               </ProtectedRoute>
             }
           />

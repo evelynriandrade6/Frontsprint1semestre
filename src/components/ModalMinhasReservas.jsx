@@ -65,7 +65,7 @@
 //     // Chamada da Api
 //     try {
 //       await api.deleteSchedule(scheduleToDelete.id);
-//       await getUsers();
+     
 //       // mensagem informativa
 //       showAlert("success", "Reserva deletada com sucesso!")
 //       setModalOpen(false)
@@ -79,12 +79,15 @@
 
 //   const listSchedules = schedules.map((schedule) => {
 //     return (
-//       <TableRow key={Schedule.id_usuario}>
-//         <TableCell align="center">{user.name}</TableCell>
-//         <TableCell align="center">{user.email}</TableCell>
-//         <TableCell align="center">{user.cpf}</TableCell>
+//       <TableRow key={Schedule.id}>
+//         <TableCell align="center">{schedule.dateStart}</TableCell>
+//         <TableCell align="center">{schedule.dateEnd}</TableCell>
+//         <TableCell align="center">{schedule.days}</TableCell>
+//         <TableCell align="center">{schedule.classroom}</TableCell>
+//         <TableCell align="center">{schedule.timeStart}</TableCell>
+//         <TableCell align="center">{schedule.timeEnd}</TableCell>
 //         <TableCell align="center">
-//           <IconButton onClick={() => openDeleteModal(user.id_usuario,user.name)}>
+//           <IconButton onClick={() => openDeleteModal(schedule.id)}>
 //             <DeleteIcon color="error" />
 //           </IconButton>
 //         </TableCell>
@@ -97,12 +100,6 @@
 //     navigate("/");
 //   }
 
-//   useEffect(() => {
-//     // if(!localStorage.getItem("authenticated")){
-//     //   navigate("/");
-//     // }
-//     getUsers();
-//   }, []);
   
 //   return (
 //     <div>
@@ -119,14 +116,14 @@
 //       </Snackbar>
 //       <ConfirmDelete
 //       open={modalOpen}
-//       userName={userToDelete.name}
-//       onConfirm={deleteUser}
+//       userName={scheduleToDelete.id}
+//       onConfirm={deleteSchedule}
 //       onClose={()=>setModalOpen(false)}
       
 //       />
 
-//       {users.length === 0 ? (
-//         <p>Carregando usuários</p>
+//       {schedules.length === 0 ? (
+//         <p>Carregando reservas</p>
 //       ) : (
 //         <div>
 //           <h5>Lista de usuários</h5>
@@ -135,30 +132,14 @@
 //               <TableHead
 //                 style={{ backgroundColor: "green", borderStyle: "solid" }}
 //               >
-//                 <TableRow>
-//                   <TableCell align="center">Nome</TableCell>
-//                   <TableCell align="center">Email</TableCell>
-//                   <TableCell align="center">CPF</TableCell>
-//                   <TableCell align="center">Ações</TableCell>
-//                 </TableRow>
+                
 //               </TableHead>
-//               <TableBody>{listUsers}</TableBody>
+//               <TableBody>{listSchedules}</TableBody>
 //             </Table>
 //           </TableContainer>
-//           <Button fullWidth variant="contained" onClick={logout}>
-//             SAIR
-//           </Button>
+         
           
-//           <Button type="submit"
-//             fullWidth
-//             variant="contained"
-//             sx={{
-//               mt: 3,
-//               mb: 2,
-//               backgroundColor: "blue",
-//             }}>
-//            <Link to="/evento">IR PARA LISTA DE EVENTOS</Link>
-//           </Button>
+         
           
 //         </div>
 //       )}

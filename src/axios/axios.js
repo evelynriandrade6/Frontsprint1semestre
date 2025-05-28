@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://10.89.240.88:5000/api/reservas/v1/",
+    baseURL: "http://10.89.240.67:5000/api/reservas/v1/",
     headers: {
         'accept': 'application/json'
     }
@@ -27,7 +27,9 @@ const sheets = {
     getSchedulesByIdClassroom: (cpf) => api.get(`schedule/${cpf}`),
     getAllClassroom: () => api.get("classroom/"),
     getSchedulesByIdClassroomRanges: (id,dataInicio,dataFim) => api.get(`/schedule/ranges/${id}?weekStart=${dataInicio}&weekEnd=${dataFim}`),
-    updateUser:(user) => api.put("user", user),
+    putUpdateUser:(user) => api.put("user", user),
+    getUserByCPF: (cpf) => api.get(`/user/${cpf}`),
+
 };
 
 export default sheets;

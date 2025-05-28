@@ -22,7 +22,6 @@ import { ptBR } from 'date-fns/locale';
 import { format } from 'date-fns';
 import api from "../axios/axios";
 
-// Import do modal filho
 import ModalDisponibilidade from "../components/ModalDisponibilidade";
 
 const diasDaSemana = [
@@ -45,11 +44,19 @@ export default function ModalCriarReserva({
   const [timeStart, setTimeStart] = useState(null);
   const [timeEnd, setTimeEnd] = useState(null);
 
-  // Estado para abrir/fechar modal filho de disponibilidade
   const [openModalDisponibilidade, setOpenModalDisponibilidade] = useState(false);
 
   const handleOpenModalDisponibilidade = () => setOpenModalDisponibilidade(true);
   const handleCloseModalDisponibilidade = () => setOpenModalDisponibilidade(false);
+
+  function limpaState() {
+    setDateStart(null);
+    setDateEnd(null);
+    setDays([]);
+    setTimeStart(null);
+    setTimeEnd(null);
+    onClose();
+  }
 
   const handleSubmit = async () => {
     if (!classroomSelecionado || !classroomSelecionado.number) {
@@ -64,38 +71,31 @@ export default function ModalCriarReserva({
       alert("Selecione pelo menos um dia.");
       return;
     }
-
+    const user_cpf = localStorage.getItem("user_cpf");
     try {
       const payload = {
         dateStart: format(dateStart, 'yyyy-MM-dd'),
         dateEnd: format(dateEnd, 'yyyy-MM-dd'),
         days,
+        user: user_cpf,
         timeStart: format(timeStart, 'HH:mm:ss'),
         timeEnd: format(timeEnd, 'HH:mm:ss'),
-        classroom: classroomSelecionado.number, // ou id, depende do backend
+        classroom: classroomSelecionado.number,
       };
 
       const response = await api.postcreateSchedule(payload);
       alert(response.data.message);
-      limpaState();
+      limpaState();  // Limpa e fecha o modal após sucesso
+
     } catch (error) {
       console.log("Erro ao criar reserva", error.response?.data || error);
       alert(error.response?.data?.error || "Erro desconhecido");
     }
   };
 
-  function limpaState() {
-    setDateStart(null);
-    setDateEnd(null);
-    setDays([]);
-    setTimeStart(null);
-    setTimeEnd(null);
-    onClose();
-  }
-
   return (
     <>
-      <Dialog open={open} onClose={onClose}>
+      <Dialog open={open} onClose={limpaState}>
         <DialogTitle>
           Criar Reserva para: {classroomSelecionado?.number || "Sala"}
         </DialogTitle>
@@ -161,19 +161,16 @@ export default function ModalCriarReserva({
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={onClose}>Cancelar</Button>
+          <Button onClick={limpaState}>Cancelar</Button>
           <Button onClick={handleSubmit} variant="contained">
             Criar
           </Button>
-
-          {/* Botão para abrir o modal de disponibilidade */}
           <Button onClick={handleOpenModalDisponibilidade} variant="outlined" color="secondary">
             Ver Disponibilidade
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Modal filho de disponibilidade */}
       <ModalDisponibilidade
         open={openModalDisponibilidade}
         onClose={handleCloseModalDisponibilidade}

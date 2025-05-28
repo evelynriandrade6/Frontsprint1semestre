@@ -1,114 +1,131 @@
-import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Stack,
-  TextField,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import api from "../axios/axios";
+import { MdAccountBox } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export default function MeuPerfil() {
   const [user, setUser] = useState(null);
-  const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await api.get("/user/profile");
-        setUser(response.data);
-        setFormData({
-          name: response.data.name,
-          email: response.data.email,
-          password: response.data.password,
-        });
-      } catch (error) {
-        console.error("Erro ao buscar perfil:", error);
-      }
-    };
+    const cpf = localStorage.getItem("user_cpf");
+    if (!cpf) {
+      setError("CPF do usuário não encontrado. Faça login.");
+      setLoading(false);
+      return;
+    }
 
-    fetchUser();
+    api.getUserByCPF(cpf)
+      .then((response) => {
+        setUser(response.data.user);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Erro ao buscar dados do usuário.");
+        setLoading(false);
+        console.error(err);
+      });
   }, []);
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSave = async () => {
-    try {
-      const response = await api.put("/user/profile", formData);
-      setUser({ ...response.data, cpf: user.cpf }); // Mantém CPF
-      setEditing(false);
-      alert("Perfil atualizado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao atualizar perfil:", error);
-      alert("Erro ao atualizar perfil.");
+  const handleEditarUsuario = () => {
+    const cpf = localStorage.getItem("user_cpf");
+    if (cpf) {
+      navigate(`/ModalEditarUsuario /${cpf}`);
     }
   };
 
-  if (!user) return <Typography>Carregando perfil...</Typography>;
+  if (loading) return <p>Carregando perfil...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <Card sx={{ maxWidth: 500, margin: "auto", mt: 5, p: 2 }}>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f5f5f5",
+        padding: "2rem",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "600px",
+          padding: "3rem",
+          borderRadius: "24px",
+          backgroundColor: "#fff",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{
+            width: "150px",
+            height: "150px",
+            borderRadius: "50%",
+            backgroundColor: "#8B0000",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "2rem",
+          }}
+        >
+          <MdAccountBox size="90" color="#fff" />
+        </div>
+
+        <h2 style={{ marginBottom: "2rem", fontSize: "2rem", color: "#333" }}>
           Meu Perfil
-        </Typography>
+        </h2>
 
-        <Stack spacing={2}>
-          {editing ? (
-            <>
-              <TextField
-                label="Nome"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                fullWidth
-              />
-              <TextField
-                label="Email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                fullWidth
-              />
-              <TextField
-                label="Função"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                fullWidth
-              />
-            </>
-          ) : (
-            <>
-              <Typography><strong>Nome:</strong> {user.name}</Typography>
-              <Typography><strong>Email:</strong> {user.email}</Typography>
-              <Typography><strong>Função:</strong> {user.role}</Typography>
-            </>
-          )}
+        <div
+          style={{
+            width: "100%",
+            textAlign: "left",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.5rem",
+            fontSize: "1.1rem",
+          }}
+        >
+          <p>
+            <strong style={{ color: "#8B0000" }}>Nome:</strong> {user?.name}
+          </p>
+          <p>
+            <strong style={{ color: "#8B0000" }}>Email:</strong> {user?.email}
+          </p>
+          <p>
+            <strong style={{ color: "#8B0000" }}>CPF:</strong> {user?.cpf}
+          </p>
+          <p>
+            <strong style={{ color: "#8B0000" }}>Senha:</strong> {user?.password}
+          </p>
+        </div>
 
-          <Typography>
-            <strong>CPF:</strong> {user.cpf}
-          </Typography>
-
-          {editing ? (
-            <Button variant="contained" onClick={handleSave}>
-              Salvar
-            </Button>
-          ) : (
-            <Button variant="outlined" onClick={() => setEditing(true)}>
-              Editar Perfil
-            </Button>
-          )}
-        </Stack>
-      </CardContent>
-    </Card>
+        <button
+          onClick={handleEditarUsuario}
+          style={{
+            marginTop: "3rem",
+            padding: "14px 28px",
+            borderRadius: "10px",
+            border: "none",
+            backgroundColor: "#8B0000",
+            color: "#fff",
+            fontWeight: "bold",
+            fontSize: "1rem",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#a30000")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#8B0000")}
+        >
+          Editar Usuário
+        </button>
+      </div>
+    </div>
   );
 }

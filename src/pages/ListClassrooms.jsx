@@ -12,8 +12,6 @@ import { Button, IconButton, Alert, Snackbar } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import ModalCriarReserva from "../components/ModalCriarReserva";
 
-
-
 function ListClassrooms() {
   const [classrooms, setClassrooms] = useState([]);
   const [alert, setAlert] = useState({
@@ -43,11 +41,6 @@ function ListClassrooms() {
       }
     );
   }
-
-  const logout = () => {
-    localStorage.removeItem("authenticated");
-    navigate("/");
-  };
 
   const [classroomSelecionado, setclassroomSelecionado] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -84,7 +77,7 @@ function ListClassrooms() {
   ));
 
   return (
-    <div>
+    <div style={{ paddingBottom: '60px' }}> {/* Espaço para o footer */}
       <Snackbar
         open={alert.open}
         autoHideDuration={3000}
@@ -126,9 +119,6 @@ function ListClassrooms() {
               <TableBody>{listClassrooms}</TableBody>
             </Table>
           </TableContainer>
-          <Button fullWidth variant="contained" onClick={logout}>
-            SAIR
-          </Button>
         </div>
       )}
     </div>
