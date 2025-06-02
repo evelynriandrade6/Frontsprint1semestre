@@ -30,10 +30,11 @@ export default function MeuPerfil() {
   }, []);
 
   const handleEditarUsuario = () => {
-    const cpf = localStorage.getItem("user_cpf");
-    if (cpf) {
-      navigate(`/ModalEditarUsuario /${cpf}`);
-    }
+    navigate(`/ModalEditarUsuario`);
+  };
+
+  const handleVerReservas = () => {
+    navigate("/ModalMinhasReservas");
   };
 
   if (loading) return <p>Carregando perfil...</p>;
@@ -124,6 +125,26 @@ export default function MeuPerfil() {
           onMouseOut={(e) => (e.target.style.backgroundColor = "#8B0000")}
         >
           Editar Usuário
+        </button>
+
+        <button
+          onClick={handleVerReservas}
+          style={{
+            marginTop: "1rem",
+            padding: "14px 28px",
+            borderRadius: "10px",
+            border: "none",
+            backgroundColor: "#004080",
+            color: "#fff",
+            fontWeight: "bold",
+            fontSize: "1rem",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#0066cc")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#004080")}
+        >
+          Ver Minhas Reservas
         </button>
       </div>
     </div>

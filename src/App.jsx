@@ -8,7 +8,9 @@ import ProtectedRoute from "./components/ProtectedRoutes";
 import ModalDisponibilidade from "./components/ModalDisponibilidade";
 import MeuPerfil from "./pages/MeuPerfil";
 import ModalEditarUsuario from "./components/ModalEditarUsuario";
-// import ModalMinhasReservas from "./components/ModalMinhasReservas"
+import ModalMinhasReservas from "./components/ModalMinhasReservas";
+import ModalConfirmDelete from "./components/ModalConfirmDelete";
+
 
 function App() {
   return (
@@ -41,14 +43,14 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
+          <Route
             path="/ModalMinhasReservas"
             element={
               <ProtectedRoute>
                 <ModalMinhasReservas />
               </ProtectedRoute>
             }
-          /> */}
+          />
 
           <Route
             path="/ListClassrooms"
@@ -76,6 +78,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/ModalConfirmDelete"
+            element={
+              <ProtectedRoute>
+                <ModalConfirmDelete />
+              </ProtectedRoute>
+            }
+          />
+
         </Routes>
       </BrowserRouter>
     </div>

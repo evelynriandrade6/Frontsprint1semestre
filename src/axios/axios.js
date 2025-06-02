@@ -29,7 +29,8 @@ const sheets = {
     getSchedulesByIdClassroomRanges: (id,dataInicio,dataFim) => api.get(`/schedule/ranges/${id}?weekStart=${dataInicio}&weekEnd=${dataFim}`),
     putUpdateUser:(user) => api.put("user", user),
     getUserByCPF: (cpf) => api.get(`/user/${cpf}`),
+    getSchedulesByUserCPF: (cpf) => api.get(`/scheduleUser/${cpf}`),
 
-};
+}
 
 export default sheets;
