@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import api from "../axios/axios";
 import { MdAccountBox } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import ModalEditarUsuario from "../components/ModalEditarUsuario";
+import ModalMinhasReservas from "../components/ModalMinhasReservas";
 
 export default function MeuPerfil() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [modalAberto, setModalAberto] = useState(false);
+  const [modalReservas, setModalReservas] = useState(false);
 
   useEffect(() => {
     const cpf = localStorage.getItem("user_cpf");
@@ -17,7 +19,8 @@ export default function MeuPerfil() {
       return;
     }
 
-    api.getUserByCPF(cpf)
+    api
+      .getUserByCPF(cpf)
       .then((response) => {
         setUser(response.data.user);
         setLoading(false);
@@ -27,14 +30,29 @@ export default function MeuPerfil() {
         setLoading(false);
         console.error(err);
       });
-  }, []);
+  }, [modalAberto]);
+  const trocarModalReservas = () => {
+    if(modalReservas === true){
+      setModalReservas(false);
+    } else {
+      setModalReservas(true);
+    }
+  }
 
-  const handleEditarUsuario = () => {
-    navigate(`/ModalEditarUsuario`);
-  };
+  const abrirModal = () => setModalAberto(true);
+  const fecharModal = () => setModalAberto(false);
 
-  const handleVerReservas = () => {
-    navigate("/ModalMinhasReservas");
+  const handleSalvarUsuario = async (dadosAtualizados) => {
+    console.log("Dados salvos:", dadosAtualizados);
+    // Chamar a api
+    try {
+      const response = await api.putUpdateUser(dadosAtualizados);
+      alert(response.data.message);
+      fecharModal();
+    } catch (error) {
+      console.log(error);
+      alert(error.response.data.error);
+    }
   };
 
   if (loading) return <p>Carregando perfil...</p>;
@@ -94,21 +112,21 @@ export default function MeuPerfil() {
           }}
         >
           <p>
-            <strong style={{ color: "#8B0000" }}>Nome:</strong> {user?.name}
+            <strong style={{ color: "#8B0000" }}>Nome:</strong> {user.name}
           </p>
           <p>
-            <strong style={{ color: "#8B0000" }}>Email:</strong> {user?.email}
+            <strong style={{ color: "#8B0000" }}>Email:</strong> {user.email}
           </p>
           <p>
-            <strong style={{ color: "#8B0000" }}>CPF:</strong> {user?.cpf}
+            <strong style={{ color: "#8B0000" }}>CPF:</strong> {user.cpf}
           </p>
           <p>
-            <strong style={{ color: "#8B0000" }}>Senha:</strong> {user?.password}
+            <strong style={{ color: "#8B0000" }}>Senha:</strong> {user.password}
           </p>
         </div>
 
         <button
-          onClick={handleEditarUsuario}
+          onClick={abrirModal}
           style={{
             marginTop: "3rem",
             padding: "14px 28px",
@@ -128,7 +146,7 @@ export default function MeuPerfil() {
         </button>
 
         <button
-          onClick={handleVerReservas}
+          onClick={trocarModalReservas}
           style={{
             marginTop: "1rem",
             padding: "14px 28px",
@@ -147,6 +165,19 @@ export default function MeuPerfil() {
           Ver Minhas Reservas
         </button>
       </div>
+
+      {/* Renderização do ModalEditarUsuario */}
+      {modalAberto && (
+        <ModalEditarUsuario
+          user={user}
+          onClose={fecharModal}
+          onSave={handleSalvarUsuario}
+        />
+      )}
+
+      {modalReservas && (
+        <ModalMinhasReservas/>
+      )}
     </div>
   );
 }

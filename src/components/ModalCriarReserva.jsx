@@ -25,12 +25,12 @@ import api from "../axios/axios";
 import ModalDisponibilidade from "../components/ModalDisponibilidade";
 
 const diasDaSemana = [
-  "Segunda",
-  "Terça",
-  "Quarta",
-  "Quinta",
-  "Sexta",
-  "Sábado",
+  "Seg",
+  "Ter",
+  "Qua",
+  "Qui",
+  "Sex",
+  "Sab",
 ];
 
 export default function ModalCriarReserva({
@@ -88,8 +88,8 @@ export default function ModalCriarReserva({
       limpaState();  // Limpa e fecha o modal após sucesso
 
     } catch (error) {
-      console.log("Erro ao criar reserva", error.response?.data || error);
-      alert(error.response?.data?.error || "Erro desconhecido");
+      console.log("Erro ao criar reserva", error.response.data || error);
+      alert(error.response.data.error || "Erro desconhecido");
     }
   };
 
@@ -97,7 +97,7 @@ export default function ModalCriarReserva({
     <>
       <Dialog open={open} onClose={limpaState}>
         <DialogTitle>
-          Criar Reserva para: {classroomSelecionado?.number || "Sala"}
+          Criar Reserva para: {classroomSelecionado.number || "Sala"}
         </DialogTitle>
         <DialogContent>
           <Stack spacing={2}>

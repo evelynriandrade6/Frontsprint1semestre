@@ -121,7 +121,7 @@ function Cadastro() {
           >
             Criar conta
           </Button>
-          <h4 sx={{fontFamily:"initial"}}>Não tem uma conta?</h4>
+          <h4 sx={{fontFamily:"initial"}}>Já tem uma conta?</h4>
           <Link to="/" style={{ color: "blue" }}>
           Clique aqui!
           </Link>

@@ -27,9 +27,11 @@ const sheets = {
     getSchedulesByIdClassroom: (cpf) => api.get(`schedule/${cpf}`),
     getAllClassroom: () => api.get("classroom/"),
     getSchedulesByIdClassroomRanges: (id,dataInicio,dataFim) => api.get(`/schedule/ranges/${id}?weekStart=${dataInicio}&weekEnd=${dataFim}`),
-    putUpdateUser:(user) => api.put("user", user),
+    putUpdateUser: (user) => api.put(`/user/${user.cpf}`, user),
     getUserByCPF: (cpf) => api.get(`/user/${cpf}`),
     getSchedulesByUserCPF: (cpf) => api.get(`/scheduleUser/${cpf}`),
+    deleteSchedule: (id) => api.delete(`/schedule/${id}`),
+
 
 }
 

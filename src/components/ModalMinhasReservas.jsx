@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import ModalConfirmDelete from "../components/ModalConfirmDelete";
 
 function ModalMinhasReservas() {
-  const [schedules, setSchedules] = useState([]);  // começa como array vazio
+  const [schedules, setSchedules] = useState([]);
   const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
   const [scheduleToDelete, setScheduleToDelete] = useState({ id: "", name: "" });
   const [modalOpen, setModalOpen] = useState(false);
@@ -26,33 +26,40 @@ function ModalMinhasReservas() {
     setAlert({ ...alert, open: false });
   };
 
-//   const openDeleteModal = (id, name) => {
-//     setScheduleToDelete({ id, name });
-//     setModalOpen(true);
-//   };
+  const openDeleteModal = (id, name) => {
+    setScheduleToDelete({ id, name });
+    setModalOpen(true);
+  };
 
   const navigate = useNavigate();
 
-  async function getSchedulesByUser() {
+  async function getSchedulesByUserCPF() {
     const cpf = localStorage.getItem("user_cpf");
     if (!cpf) {
       showAlert("error", "CPF do usuário não encontrado.");
       return;
     }
     try {
-      // Usa a função do seu axios que retorna a promise correta
       const response = await api.getSchedulesByUserCPF(cpf);
-      // Garante que schedules seja sempre array
-      setSchedules(response.data.schedules || []);
+      const scheduleObj = response.data.schedule;
+      console.log(scheduleObj)
+      const allSchedules = Object.entries(scheduleObj).flatMap(([dia, reservas]) =>
+        reservas.map((reserva) => ({
+          ...reserva,
+          dia,
+        }))
+      );
+
+      setSchedules(allSchedules);
     } catch (error) {
       console.log("Erro ao buscar reservas:", error);
       showAlert("error", "Erro ao buscar reservas.");
-      setSchedules([]); // evita undefined
+      setSchedules([]);
     }
   }
 
   useEffect(() => {
-    getSchedulesByUser();
+    getSchedulesByUserCPF();
   }, []);
 
   async function deleteSchedule() {
@@ -60,7 +67,7 @@ function ModalMinhasReservas() {
       await api.deleteSchedule(scheduleToDelete.id);
       showAlert("success", "Reserva deletada com sucesso!");
       setModalOpen(false);
-      getSchedulesByUser(); // atualiza lista após exclusão
+      getSchedulesByUserCPF();
     } catch (error) {
       showAlert("error", "Erro ao deletar reserva!");
       setModalOpen(false);
@@ -68,15 +75,14 @@ function ModalMinhasReservas() {
   }
 
   const listSchedules = schedules.map((schedule) => (
-    <TableRow key={schedule.id || schedule.number}>
-      <TableCell align="center">{schedule.dateStart}</TableCell>
-      <TableCell align="center">{schedule.dateEnd}</TableCell>
-      <TableCell align="center">{schedule.days}</TableCell>
-      <TableCell align="center">{schedule.classroom}</TableCell>
-      <TableCell align="center">{schedule.timeStart}</TableCell>
-      <TableCell align="center">{schedule.timeEnd}</TableCell>
+    <TableRow key={schedule.id}>
+      
+      <TableCell align="center">{schedule.classroomName}</TableCell>
+      <TableCell align="center">{schedule.horaInicio}</TableCell>
+      <TableCell align="center">{schedule.horaFim}</TableCell>
+      <TableCell align="center">{schedule.dia}</TableCell>
       <TableCell align="center">
-        <IconButton onClick={() => openDeleteModal(schedule.id, schedule.classroom)}>
+        <IconButton onClick={() => openDeleteModal(schedule.id, schedule.classroomName)}>
           <DeleteIcon color="error" />
         </IconButton>
       </TableCell>
@@ -96,12 +102,12 @@ function ModalMinhasReservas() {
         </Alert>
       </Snackbar>
 
-      {/* <ModalConfirmDelete
+      <ModalConfirmDelete
         open={modalOpen}
         userName={scheduleToDelete.name}
         onConfirm={deleteSchedule}
         onClose={() => setModalOpen(false)}
-      /> */}
+      />
 
       {schedules.length === 0 ? (
         <p>Carregando reservas...</p>
@@ -112,12 +118,10 @@ function ModalMinhasReservas() {
             <Table size="small">
               <TableHead style={{ backgroundColor: "green", borderStyle: "solid" }}>
                 <TableRow>
-                  <TableCell align="center">Início</TableCell>
-                  <TableCell align="center">Fim</TableCell>
-                  <TableCell align="center">Dias</TableCell>
                   <TableCell align="center">Sala</TableCell>
                   <TableCell align="center">Hora Início</TableCell>
                   <TableCell align="center">Hora Fim</TableCell>
+                  <TableCell align="center">Dia</TableCell>
                   <TableCell align="center">Ações</TableCell>
                 </TableRow>
               </TableHead>
@@ -126,6 +130,7 @@ function ModalMinhasReservas() {
           </TableContainer>
         </div>
       )}
+      
     </div>
   );
 }

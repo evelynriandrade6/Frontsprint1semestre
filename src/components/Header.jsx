@@ -10,11 +10,11 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate(-1); // Voltar para a página anterior
+    navigate(-1); 
   };
 
   const handlePerfil = () => {
-    navigate("/MeuPerfil"); // Direciona para a página de perfil
+    navigate("/MeuPerfil"); 
   };
 
   return (
