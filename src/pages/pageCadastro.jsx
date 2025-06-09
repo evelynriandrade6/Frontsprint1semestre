@@ -30,7 +30,7 @@ function Cadastro() {
       (response) => {
         alert(response.data.message);
         localStorage.setItem("authenticated", true);
-        navigate("/Home");
+        navigate("/");
       },
       (error) => {
         console.log(error);

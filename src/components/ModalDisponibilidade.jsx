@@ -74,7 +74,7 @@ export default function ModalDisponibilidade({ open, onClose, classroom }) {
       );
       alert(
         "Erro ao buscar disponibilidade: " +
-          (error.response?.data?.error || error.message)
+          (error.response.data.error || error.message)
       );
       setHorariosDisponiveis([]);
     }
@@ -83,7 +83,7 @@ export default function ModalDisponibilidade({ open, onClose, classroom }) {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>
-        Disponibilidade da sala: {classroom?.number || "Sala"}
+        Disponibilidade da sala: {classroom.number || "Sala"}
       </DialogTitle>
       <DialogContent>
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>

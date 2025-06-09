@@ -9,10 +9,10 @@ import Paper from "@mui/material/Paper";
 import api from "../axios/axios";
 import { IconButton, Alert, Snackbar } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useNavigate } from "react-router-dom";
 import ModalConfirmDelete from "../components/ModalConfirmDelete";
+import ModalCriarReserva from "../components/ModalCriarReserva";
 
-function ModalMinhasReservas() {
+function ModalMinhasReservas({ onClose }) {
   const [schedules, setSchedules] = useState([]);
   const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
   const [scheduleToDelete, setScheduleToDelete] = useState({ id: "", name: "" });
@@ -31,8 +31,6 @@ function ModalMinhasReservas() {
     setModalOpen(true);
   };
 
-  const navigate = useNavigate();
-
   async function getSchedulesByUserCPF() {
     const cpf = localStorage.getItem("user_cpf");
     if (!cpf) {
@@ -42,18 +40,13 @@ function ModalMinhasReservas() {
     try {
       const response = await api.getSchedulesByUserCPF(cpf);
       const scheduleObj = response.data.schedule;
-      console.log(scheduleObj)
       const allSchedules = Object.entries(scheduleObj).flatMap(([dia, reservas]) =>
-        reservas.map((reserva) => ({
-          ...reserva,
-          dia,
-        }))
+        reservas.map((reserva) => ({ ...reserva, dia }))
       );
-
       setSchedules(allSchedules);
     } catch (error) {
       console.log("Erro ao buscar reservas:", error);
-      showAlert("error", "Erro ao buscar reservas.");
+      showAlert("error", error.response.data.error || "Erro ao carregar reservas.");
       setSchedules([]);
     }
   }
@@ -76,7 +69,6 @@ function ModalMinhasReservas() {
 
   const listSchedules = schedules.map((schedule) => (
     <TableRow key={schedule.id}>
-      
       <TableCell align="center">{schedule.classroomName}</TableCell>
       <TableCell align="center">{schedule.horaInicio}</TableCell>
       <TableCell align="center">{schedule.horaFim}</TableCell>
@@ -90,49 +82,97 @@ function ModalMinhasReservas() {
   ));
 
   return (
-    <div>
+    <>
+      {/* Alert fora do modal, com z-index mais alto */}
       <Snackbar
         open={alert.open}
         autoHideDuration={3000}
         onClose={handleCloseAlert}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        sx={{ zIndex: 2000 }} // <--- Resolvendo sobreposição
       >
         <Alert onClose={handleCloseAlert} severity={alert.severity} sx={{ width: "100%" }}>
           {alert.message}
         </Alert>
       </Snackbar>
 
+      {/* Modal Principal */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1500,
+        }}
+      >
+        <div
+          style={{
+            background: "#fff",
+            padding: "2rem",
+            borderRadius: "12px",
+            width: "80%",
+            maxHeight: "90%",
+            overflowY: "auto",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+            position: "relative"
+          }}
+        >
+          {/* Botão de Fechar */}
+          <button
+            onClick={onClose}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              backgroundColor: "#ccc",
+              border: "none",
+              borderRadius: "6px",
+              padding: "6px 10px",
+              cursor: "pointer"
+            }}
+          >
+            Fechar
+          </button>
+
+          <h3 style={{ color: "green", marginBottom: "1rem" }}>Minhas Reservas</h3>
+
+          {schedules.length === 0 ? (
+            <p>Carregando reservas...</p>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead style={{ backgroundColor: "green" }}>
+                  <TableRow>
+                    <TableCell align="center" style={{ color: "#fff" }}>Sala</TableCell>
+                    <TableCell align="center" style={{ color: "#fff" }}>Hora Início</TableCell>
+                    <TableCell align="center" style={{ color: "#fff" }}>Hora Fim</TableCell>
+                    <TableCell align="center" style={{ color: "#fff" }}>Dia</TableCell>
+                    <TableCell align="center" style={{ color: "#fff" }}>Ações</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{listSchedules}</TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </div>
+      </div>
+
+      {/* Modal de confirmação de exclusão */}
       <ModalConfirmDelete
         open={modalOpen}
         userName={scheduleToDelete.name}
         onConfirm={deleteSchedule}
         onClose={() => setModalOpen(false)}
       />
-
-      {schedules.length === 0 ? (
-        <p>Carregando reservas...</p>
-      ) : (
-        <div>
-          <h5>Minhas Reservas</h5>
-          <TableContainer component={Paper} style={{ margin: "2px" }}>
-            <Table size="small">
-              <TableHead style={{ backgroundColor: "green", borderStyle: "solid" }}>
-                <TableRow>
-                  <TableCell align="center">Sala</TableCell>
-                  <TableCell align="center">Hora Início</TableCell>
-                  <TableCell align="center">Hora Fim</TableCell>
-                  <TableCell align="center">Dia</TableCell>
-                  <TableCell align="center">Ações</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{listSchedules}</TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-      )}
       
-    </div>
+    </>
   );
 }
 
-export default ModalMinhasReservas;
+export default ModalMinhasReservas; 

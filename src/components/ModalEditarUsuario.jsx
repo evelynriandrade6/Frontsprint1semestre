@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { Snackbar, Alert } from "@mui/material";
+import ModalConfirmDelete from "../components/ModalConfirmDelete";
+import api from "../axios/axios";
 
 export default function ModalEditarUsuario({ user, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -7,8 +10,9 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
     cpf: "",
     password: ""
   });
-  // Adicionei um estado para erros, caso queira implementar validação no futuro
   const [errors, setErrors] = useState({});
+  const [alert, setAlert] = useState({ open: false, severity: "", message: "" });
+  const [modalOpen, setModalOpen] = useState(false); // Modal de confirmação
 
   useEffect(() => {
     if (user) {
@@ -19,7 +23,7 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
         password: user.password || ""
       });
     }
-  }, [user]); // Este useEffect será executado sempre que a prop 'user' mudar
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,36 +31,40 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
       ...prev,
       [name]: value
     }));
-    // Limpa o erro para o campo atual quando o usuário digita
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  // const validate = () => {
-  //   let newErrors = {};
-  //   if (!formData.name) newErrors.name = "Nome é obrigatório.";
-  //   if (!formData.email) {
-  //     newErrors.email = "Email é obrigatório.";
-  //   } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-  //     newErrors.email = "Email inválido.";
-  //   }
-  //   // Não precisa validar CPF se ele está desabilitado e vem do `user`
-  //   if (!formData.password) newErrors.password = "Senha é obrigatória.";
-  //   else if (formData.password.length < 4) newErrors.password = "A senha deve ter no mínimo 6 caracteres.";
-
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0; // Retorna true se não houver erros
-  // };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
-      onSave(formData);
-    
+    onSave(formData);
   };
 
-  // REMOVIDO: if (!user) return null;
+  const showAlert = (severity, message) => {
+    setAlert({ open: true, severity, message });
+  };
+
+  const handleCloseAlert = () => {
+    setAlert({ ...alert, open: false });
+  };
+
+  const deleteUser = async () => {
+    try {
+      await api.deleteUser(formData.cpf);
+      showAlert("success", "Usuário deletado com sucesso!");
+      setModalOpen(false);
+      setTimeout(() => {
+        onClose(); // Fecha o modal
+        localStorage.clear();
+        window.location.href = "/"; // Redireciona para o login ou home
+      }, 2000);
+    } catch (error) {
+      console.error("Erro ao deletar usuário:", error);
+      showAlert("error", "Erro ao deletar conta.");
+      setModalOpen(false);
+    }
+  };
 
   const inputStyle = {
     padding: "10px",
@@ -89,33 +97,57 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
     cursor: "pointer"
   };
 
+  const buttonDelete = {
+    backgroundColor: "red",
+    color: "#fff",
+    border: "none",
+    padding: "8px 16px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    marginTop: "1rem"
+  };
+
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 1000 // Z-index alto para garantir que apareça acima de outros elementos
-      }}
-    >
+    <>
+      {/* ALERTA */}
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        sx={{ zIndex: 2000 }}
+      >
+        <Alert onClose={handleCloseAlert} severity={alert.severity} sx={{ width: "100%" }}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
+
+      {/* MODAL PRINCIPAL */}
       <div
         style={{
-          background: "#fff",
-          padding: "2rem",
-          borderRadius: "12px",
-          width: "400px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
           display: "flex",
-          flexDirection: "column",
-          gap: "1rem"
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1000
         }}
       >
-        <h2 style={{ textAlign: "center", color: "#8B0000" }}>Editar Perfil</h2>
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div>
+        <div
+          style={{
+            background: "#fff",
+            padding: "2rem",
+            borderRadius: "12px",
+            width: "400px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem"
+          }}
+        >
+          <h2 style={{ textAlign: "center", color: "#8B0000" }}>Editar Perfil</h2>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <input
               type="text"
               name="name"
@@ -126,8 +158,7 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
               required
             />
             {errors.name && <p style={errorStyle}>{errors.name}</p>}
-          </div>
-          <div>
+
             <input
               type="email"
               name="email"
@@ -138,57 +169,42 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
               required
             />
             {errors.email && <p style={errorStyle}>{errors.email}</p>}
-          </div>
-          <div>
-            {/* Opção 1: CPF como campo desabilitado (como você tinha) */}
+
             <input
               type="text"
               name="cpf"
               value={formData.cpf}
-              onChange={handleChange} // Opcional, já que está desabilitado
               placeholder="CPF"
               style={inputStyle}
-              required
-              disabled // CPF é desabilitado
+              disabled
             />
-            {/* Opção 2 (alternativa): Exibir CPF como texto simples se não for editável */}
-            {/*
-            <label style={{ fontSize: "0.9rem", color: "#555", marginBottom: "0.2rem", display: "block" }}>CPF:</label>
-            <p style={{
-              padding: "10px",
-              borderRadius: "6px",
-              border: "1px solid #eee",
-              backgroundColor: "#f9f9f9",
-              fontSize: "1rem",
-              color: "#333"
-            }}>
-              {formData.cpf}
-            </p>
-            */}
-          </div>
-          <div>
-            <input
-              type="numeric"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Senha"
-              style={inputStyle}
-              required
-            />
-            {errors.password && <p style={errorStyle}>{errors.password}</p>}
-          </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
-            <button type="button" onClick={onClose} style={buttonCancel}>
-              Cancelar
-            </button>
-            <button type="submit" style={buttonSave}>
-              Salvar
-            </button>
-          </div>
-        </form>
+           
+
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
+              <button type="button" onClick={onClose} style={buttonCancel}>
+                Cancelar
+              </button>
+              <button type="submit" style={buttonSave}>
+                Salvar
+              </button>
+            </div>
+          </form>
+
+          {/* Botão de Deletar Conta */}
+          <button style={buttonDelete} onClick={() => setModalOpen(true)}>
+            Deletar Conta
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Modal de confirmação de deleção */}
+      <ModalConfirmDelete
+        open={modalOpen}
+        userName={formData.name}
+        onConfirm={deleteUser}
+        onClose={() => setModalOpen(false)}
+      />
+    </>
   );
 }

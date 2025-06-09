@@ -120,9 +120,7 @@ export default function MeuPerfil() {
           <p>
             <strong style={{ color: "#8B0000" }}>CPF:</strong> {user.cpf}
           </p>
-          <p>
-            <strong style={{ color: "#8B0000" }}>Senha:</strong> {user.password}
-          </p>
+          
         </div>
 
         <button

@@ -31,6 +31,7 @@ const sheets = {
     getUserByCPF: (cpf) => api.get(`/user/${cpf}`),
     getSchedulesByUserCPF: (cpf) => api.get(`/scheduleUser/${cpf}`),
     deleteSchedule: (id) => api.delete(`/schedule/${id}`),
+    deleteUser: (cpf) => api.delete(`/user/${cpf}`),
 
 
 }
