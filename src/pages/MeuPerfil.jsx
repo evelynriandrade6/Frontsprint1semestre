@@ -31,20 +31,16 @@ export default function MeuPerfil() {
         console.error(err);
       });
   }, [modalAberto]);
+
   const trocarModalReservas = () => {
-    if(modalReservas === true){
-      setModalReservas(false);
-    } else {
-      setModalReservas(true);
-    }
-  }
+    setModalReservas(!modalReservas);
+  };
 
   const abrirModal = () => setModalAberto(true);
   const fecharModal = () => setModalAberto(false);
 
   const handleSalvarUsuario = async (dadosAtualizados) => {
     console.log("Dados salvos:", dadosAtualizados);
-    // Chamar a api
     try {
       const response = await api.putUpdateUser(dadosAtualizados);
       alert(response.data.message);
@@ -120,7 +116,6 @@ export default function MeuPerfil() {
           <p>
             <strong style={{ color: "#8B0000" }}>CPF:</strong> {user.cpf}
           </p>
-          
         </div>
 
         <button
@@ -164,7 +159,6 @@ export default function MeuPerfil() {
         </button>
       </div>
 
-      {/* Renderização do ModalEditarUsuario */}
       {modalAberto && (
         <ModalEditarUsuario
           user={user}
@@ -174,7 +168,7 @@ export default function MeuPerfil() {
       )}
 
       {modalReservas && (
-        <ModalMinhasReservas/>
+        <ModalMinhasReservas onClose={() => setModalReservas(false)} />
       )}
     </div>
   );

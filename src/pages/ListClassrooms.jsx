@@ -69,6 +69,9 @@ function ListClassrooms() {
           variant="contained"
           size="small"
           onClick={() => abrirModalReserva(classroom)}
+          // --- AQUI É A MUDANÇA ---
+          sx={{ backgroundColor: '#004080', '&:hover': { backgroundColor: '#003366' } }}
+          // --- FIM DA MUDANÇA ---
         >
           Reservar
         </Button>
@@ -77,7 +80,9 @@ function ListClassrooms() {
   ));
 
   return (
-    <div style={{ paddingBottom: '60px' }}> {/* Espaço para o footer */}
+    <div style={{ paddingBottom: "60px" }}>
+      {" "}
+      {/* Espaço para o footer */}
       <Snackbar
         open={alert.open}
         autoHideDuration={3000}
@@ -92,13 +97,11 @@ function ListClassrooms() {
           {alert.message}
         </Alert>
       </Snackbar>
-
       <ModalCriarReserva
         open={modalOpen}
         onClose={fecharModalReserva}
         classroomSelecionado={classroomSelecionado}
       />
-
       {classrooms.length === 0 ? (
         <p>Carregando Salas</p>
       ) : (
@@ -106,16 +109,35 @@ function ListClassrooms() {
           <h5>Lista de Salas</h5>
           <TableContainer component={Paper} style={{ margin: "2px" }}>
             <Table size="small">
-              <TableHead
-                style={{ backgroundColor: "green", borderStyle: "solid" }}
-              >
+              <TableHead style={{ backgroundColor: "#801515" }}>
                 <TableRow>
-                  <TableCell align="center">Número</TableCell>
-                  <TableCell align="center">Descrição</TableCell>
-                  <TableCell align="center">Capacidade</TableCell>
-                  <TableCell align="center">Ações</TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ color: "white", fontWeight: "bold" }}
+                  >
+                    Número
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ color: "white", fontWeight: "bold" }}
+                  >
+                    Descrição
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ color: "white", fontWeight: "bold" }}
+                  >
+                    Capacidade
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ color: "white", fontWeight: "bold" }}
+                  >
+                    Ações
+                  </TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>{listClassrooms}</TableBody>
             </Table>
           </TableContainer>

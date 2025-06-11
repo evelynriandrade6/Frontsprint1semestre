@@ -108,7 +108,7 @@ function ModalMinhasReservas({ onClose }) {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          zIndex: 1500,
+          
         }}
       >
         <div

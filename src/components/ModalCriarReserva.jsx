@@ -14,6 +14,8 @@ import {
   ListItemText,
   TextField,
   Stack,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
@@ -24,14 +26,7 @@ import api from "../axios/axios";
 
 import ModalDisponibilidade from "../components/ModalDisponibilidade";
 
-const diasDaSemana = [
-  "Seg",
-  "Ter",
-  "Qua",
-  "Qui",
-  "Sex",
-  "Sab",
-];
+const diasDaSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
 
 export default function ModalCriarReserva({
   open,
@@ -46,8 +41,15 @@ export default function ModalCriarReserva({
 
   const [openModalDisponibilidade, setOpenModalDisponibilidade] = useState(false);
 
+  const [alert, setAlert] = useState({ open: false, severity: "success", message: "" });
+
   const handleOpenModalDisponibilidade = () => setOpenModalDisponibilidade(true);
   const handleCloseModalDisponibilidade = () => setOpenModalDisponibilidade(false);
+
+  const handleCloseAlert = (_, reason) => {
+    if (reason === "clickaway") return;
+    setAlert({ ...alert, open: false });
+  };
 
   function limpaState() {
     setDateStart(null);
@@ -60,18 +62,20 @@ export default function ModalCriarReserva({
 
   const handleSubmit = async () => {
     if (!classroomSelecionado || !classroomSelecionado.number) {
-      alert("Nenhuma sala selecionada!");
+      setAlert({ open: true, severity: "error", message: "Nenhuma sala selecionada!" });
       return;
     }
     if (!dateStart || !dateEnd || !timeStart || !timeEnd) {
-      alert("Preencha todas as datas e horários.");
+      setAlert({ open: true, severity: "error", message: "Preencha todas as datas e horários." });
       return;
     }
     if (days.length === 0) {
-      alert("Selecione pelo menos um dia.");
+      setAlert({ open: true, severity: "error", message: "Selecione pelo menos um dia." });
       return;
     }
+
     const user_cpf = localStorage.getItem("user_cpf");
+
     try {
       const payload = {
         dateStart: format(dateStart, 'yyyy-MM-dd'),
@@ -84,17 +88,32 @@ export default function ModalCriarReserva({
       };
 
       const response = await api.postcreateSchedule(payload);
-      alert(response.data.message);
-      limpaState();  // Limpa e fecha o modal após sucesso
 
+      setAlert({ open: true, severity: "success", message: response.data.message });
+      limpaState(); // fecha o modal e limpa campos
     } catch (error) {
-      console.log("Erro ao criar reserva", error.response.data || error);
-      alert(error.response.data.error || "Erro desconhecido");
+      console.log("Erro ao criar reserva", error.response?.data || error);
+      setAlert({
+        open: true,
+        severity: "error",
+        message: error.response?.data?.error || "Erro desconhecido",
+      });
     }
   };
 
   return (
     <>
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseAlert} severity={alert.severity} sx={{ width: "100%" }}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
+
       <Dialog open={open} onClose={limpaState}>
         <DialogTitle>
           Criar Reserva para: {classroomSelecionado.number || "Sala"}
@@ -110,7 +129,6 @@ export default function ModalCriarReserva({
                   <TextField {...params} fullWidth margin="dense" />
                 )}
               />
-
               <DatePicker
                 label="Data de Fim"
                 value={dateEnd}
@@ -119,7 +137,6 @@ export default function ModalCriarReserva({
                   <TextField {...params} fullWidth margin="dense" />
                 )}
               />
-
               <FormControl fullWidth margin="dense">
                 <InputLabel id="label-dias">Dias para reserva</InputLabel>
                 <Select
@@ -138,7 +155,6 @@ export default function ModalCriarReserva({
                   ))}
                 </Select>
               </FormControl>
-
               <TimePicker
                 label="Hora de Início"
                 value={timeStart}
@@ -147,7 +163,6 @@ export default function ModalCriarReserva({
                   <TextField {...params} fullWidth margin="dense" />
                 )}
               />
-
               <TimePicker
                 label="Hora de Fim"
                 value={timeEnd}

@@ -39,6 +39,10 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData);
+    showAlert("success", "Usuário atualizado com sucesso!");
+    setTimeout(() => {
+      onClose(); // Fecha o modal após 2 segundos
+    }, 2000);
   };
 
   const showAlert = (severity, message) => {
@@ -112,7 +116,7 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
       {/* ALERTA */}
       <Snackbar
         open={alert.open}
-        autoHideDuration={3000}
+        autoHideDuration={4000}
         onClose={handleCloseAlert}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         sx={{ zIndex: 2000 }}
@@ -178,8 +182,6 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
               style={inputStyle}
               disabled
             />
-
-           
 
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
               <button type="button" onClick={onClose} style={buttonCancel}>
