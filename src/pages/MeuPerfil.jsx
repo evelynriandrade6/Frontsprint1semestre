@@ -19,15 +19,14 @@ export default function MeuPerfil() {
       return;
     }
 
-    api
-      .getUserByCPF(cpf)
+    api.getUserByCPF(cpf)
       .then((response) => {
         setUser(response.data.user);
         setLoading(false);
       })
       .catch((err) => {
         setError("Erro ao buscar dados do usuário.");
-        setLoading(false);
+        setLoading(true);
         console.error(err);
       });
   }, [modalAberto]);

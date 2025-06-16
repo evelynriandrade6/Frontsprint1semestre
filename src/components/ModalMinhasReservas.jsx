@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react";
-import Table from "@mui/material/Table";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableBody from "@mui/material/TableBody";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import Paper from "@mui/material/Paper";
 import api from "../axios/axios";
-import { IconButton, Alert, Snackbar } from "@mui/material";
+import { IconButton, Alert, Snackbar, Paper } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModalConfirmDelete from "../components/ModalConfirmDelete";
-import ModalCriarReserva from "../components/ModalCriarReserva";
 
 function ModalMinhasReservas({ onClose }) {
   const [schedules, setSchedules] = useState([]);
@@ -40,13 +32,15 @@ function ModalMinhasReservas({ onClose }) {
     try {
       const response = await api.getSchedulesByUserCPF(cpf);
       const scheduleObj = response.data.schedule;
+
       const allSchedules = Object.entries(scheduleObj).flatMap(([dia, reservas]) =>
         reservas.map((reserva) => ({ ...reserva, dia }))
       );
+
       setSchedules(allSchedules);
     } catch (error) {
       console.log("Erro ao buscar reservas:", error);
-      showAlert("error", error.response.data.error || "Erro ao carregar reservas.");
+      showAlert("error", error.response?.data?.error || "Erro ao carregar reservas.");
       setSchedules([]);
     }
   }
@@ -67,29 +61,25 @@ function ModalMinhasReservas({ onClose }) {
     }
   }
 
-  const listSchedules = schedules.map((schedule) => (
-    <TableRow key={schedule.id}>
-      <TableCell align="center">{schedule.classroomName}</TableCell>
-      <TableCell align="center">{schedule.horaInicio}</TableCell>
-      <TableCell align="center">{schedule.horaFim}</TableCell>
-      <TableCell align="center">{schedule.dia}</TableCell>
-      <TableCell align="center">
-        <IconButton onClick={() => openDeleteModal(schedule.id, schedule.classroomName)}>
-          <DeleteIcon color="error" />
-        </IconButton>
-      </TableCell>
-    </TableRow>
-  ));
+  //  Agrupando as reservas por dia
+  const groupedByDay = schedules.reduce((acc, curr) => {
+    const dia = curr.dia || "Sem dia";
+    if (!acc[dia]) {
+      acc[dia] = [];
+    }
+    acc[dia].push(curr);
+    return acc;
+  }, {});
 
   return (
     <>
-      {/* Alert fora do modal, com z-index mais alto */}
+      {/* Alert */}
       <Snackbar
         open={alert.open}
         autoHideDuration={3000}
         onClose={handleCloseAlert}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        sx={{ zIndex: 2000 }} // <--- Resolvendo sobreposição
+        sx={{ zIndex: 2000 }}
       >
         <Alert onClose={handleCloseAlert} severity={alert.severity} sx={{ width: "100%" }}>
           {alert.message}
@@ -102,8 +92,8 @@ function ModalMinhasReservas({ onClose }) {
           position: "fixed",
           top: 0,
           left: 0,
-          right: 0,
-          bottom: 0,
+          width: "100vw",
+          height: "100vh",
           backgroundColor: "rgba(0,0,0,0.5)",
           display: "flex",
           justifyContent: "center",
@@ -113,52 +103,88 @@ function ModalMinhasReservas({ onClose }) {
       >
         <div
           style={{
-            background: "#fff",
+            background: "#f5f7fa",
             padding: "2rem",
-            borderRadius: "12px",
-            width: "80%",
-            maxHeight: "90%",
+            borderRadius: "16px",
+            width: "90%",
+            maxWidth: "900px",
+            maxHeight: "90vh",
             overflowY: "auto",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-            position: "relative"
+            boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
+            position: "relative",
+            backdropFilter: "blur(6px)",
           }}
         >
-          {/* Botão de Fechar */}
+          {/* Botão Fechar */}
           <button
             onClick={onClose}
             style={{
               position: "absolute",
               top: "10px",
               right: "10px",
-              backgroundColor: "#ccc",
+              backgroundColor: "#e57373",
+              color: "#fff",
               border: "none",
-              borderRadius: "6px",
-              padding: "6px 10px",
-              cursor: "pointer"
+              borderRadius: "8px",
+              padding: "6px 12px",
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+              transition: "background-color 0.3s",
             }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#ef5350")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#e57373")}
           >
             Fechar
           </button>
 
-          <h3 style={{ color: "green", marginBottom: "1rem" }}>Minhas Reservas</h3>
+          <h2 style={{ color: "#801515", marginBottom: "1rem", textAlign: "center" }}>
+            Minhas Reservas
+          </h2>
 
           {schedules.length === 0 ? (
-            <p>Carregando reservas...</p>
+            <p style={{ textAlign: "center", color: "#555" }}>Nenhuma reserva encontrada.</p>
           ) : (
-            <TableContainer component={Paper}>
-              <Table size="small">
-                <TableHead style={{ backgroundColor: "green" }}>
-                  <TableRow>
-                    <TableCell align="center" style={{ color: "#fff" }}>Sala</TableCell>
-                    <TableCell align="center" style={{ color: "#fff" }}>Hora Início</TableCell>
-                    <TableCell align="center" style={{ color: "#fff" }}>Hora Fim</TableCell>
-                    <TableCell align="center" style={{ color: "#fff" }}>Dia</TableCell>
-                    <TableCell align="center" style={{ color: "#fff" }}>Ações</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{listSchedules}</TableBody>
-              </Table>
-            </TableContainer>
+            Object.entries(groupedByDay).map(([dia, reservas]) => (
+              <Paper
+                key={dia}
+                elevation={3}
+                style={{
+                  marginBottom: "1.5rem",
+                  padding: "1rem 1.5rem",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "12px",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                }}
+              >
+                <h3 style={{ color: "#00695c", marginBottom: "1rem", borderBottom: "1px solid #eee", paddingBottom: "4px" }}>
+                  {dia.charAt(0).toUpperCase() + dia.slice(1)}
+                </h3>
+                {reservas.map((schedule) => (
+                  <div
+                    key={schedule.id}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "0.5rem 0",
+                      borderBottom: "1px solid #f0f0f0",
+                    }}
+                  >
+                    <div style={{ color: "#333" }}>
+                      <strong>Sala:</strong> {schedule.classroomName} |{" "}
+                      <strong>Início:</strong> {schedule.horaInicio} |{" "}
+                      <strong>Fim:</strong> {schedule.horaFim}
+                    </div>
+                    <IconButton
+                      onClick={() => openDeleteModal(schedule.id, schedule.classroomName)}
+                      size="small"
+                    >
+                      <DeleteIcon color="error" fontSize="small" />
+                    </IconButton>
+                  </div>
+                ))}
+              </Paper>
+            ))
           )}
         </div>
       </div>
@@ -170,9 +196,8 @@ function ModalMinhasReservas({ onClose }) {
         onConfirm={deleteSchedule}
         onClose={() => setModalOpen(false)}
       />
-      
     </>
   );
 }
 
-export default ModalMinhasReservas; 
+export default ModalMinhasReservas;

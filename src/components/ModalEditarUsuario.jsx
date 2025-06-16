@@ -61,7 +61,7 @@ export default function ModalEditarUsuario({ user, onClose, onSave }) {
       setTimeout(() => {
         onClose(); // Fecha o modal
         localStorage.clear();
-        window.location.href = "/"; // Redireciona para o login ou home
+        window.location.href = "/"; // Redireciona para o login 
       }, 2000);
     } catch (error) {
       console.error("Erro ao deletar usuário:", error);
